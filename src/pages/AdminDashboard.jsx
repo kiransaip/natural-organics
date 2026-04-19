@@ -20,6 +20,8 @@ const DEFAULT_HERO_IMAGES = [
   'https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=1200'
 ];
 
+const DEFAULT_CATEGORIES = ['Vegetables', 'Leafy Greens', 'Fruits', 'Natural Products'];
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
@@ -66,7 +68,13 @@ const AdminDashboard = () => {
         setProducts(DEFAULT_SEED.map(p => ({ ...p, reviewsList: [] })));
       }
 
-      if (cD && cD.length > 0) setCategories(cD.map(c => c.name));
+      if (cD && cD.length > 0) {
+        setCategories(cD.map(c => c.name));
+      } else {
+        const seedCats = DEFAULT_CATEGORIES.map(name => ({ id: generateId(), name }));
+        await supabase.from('categories').insert(seedCats);
+        setCategories(DEFAULT_CATEGORIES);
+      }
       if (vD) setVendors(vD);
 
       if (hD && hD.length > 0) {
