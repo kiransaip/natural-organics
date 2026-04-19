@@ -39,8 +39,9 @@ const CartDrawer = () => {
       hour: '2-digit', minute: '2-digit', hour12: true 
     });
 
-    // Make Order ID securely identifiable through date, name, and total price
-    const idString = `ORD-${formData.name} | ${dateTimeStr} | ₹${totalPrice.toLocaleString()}`;
+    // Make Order ID securely identifiable through date, name, last 4 of mobile, and total price
+    const mobileLast4 = formData.mobile.slice(-4) || '0000';
+    const idString = `ORD-${formData.name} (${mobileLast4}) | ${dateTimeStr} | ₹${totalPrice.toLocaleString()}`;
     const orderIdB64 = btoa(unescape(encodeURIComponent(idString)));
 
     const message = [
