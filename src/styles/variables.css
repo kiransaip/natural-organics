@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  /* High-End Professional Palette */
+  --primary: #1e3a1a; 
+  --primary-light: #3a6332;
+  --primary-dark: #122510;
+  --secondary: #d4a017; /* Sophisticated Muted Gold */
+  --accent: #cf671f; /* Burnt Orange */
+  
+  /* Neutral Palette */
+  --bg-main: #fcfdfc;
+  --bg-card: #ffffff;
+  --bg-footer: #0d160c;
+  --text-main: #0a0c0a;
+  --text-muted: #4a554a;
+  --text-light: #ffffff;
+  
+  /* Spacing System */
+  --space-xs: 0.5rem;   /* 8px */
+  --space-sm: 1rem;     /* 16px */
+  --space-md: 1.5rem;   /* 24px */
+  --space-lg: 2.5rem;   /* 40px */
+  --space-xl: 4rem;     /* 64px */
+  --space-xxl: 6rem;    /* 96px */
+  
+  /* Radii */
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 2rem;
+  --radius-full: 9999px;
+
+  /* Gradients */
+  --gradient-primary: linear-gradient(135deg, #1e3a1a 0%, #3a6332 100%);
+  --gradient-secondary: linear-gradient(135deg, #d4a017 0%, #b8860b 100%);
+  --gradient-glass: rgba(255, 255, 255, 0.75);
+  --gradient-page: radial-gradient(at 0% 0%, rgba(30, 58, 26, 0.03) 0, transparent 50%), 
+                   radial-gradient(at 100% 100%, rgba(212, 160, 23, 0.03) 0, transparent 50%);
+  
+  /* Shadows */
+  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 12px 24px -8px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 32px 64px -16px rgba(0, 0, 0, 0.12);
+  --shadow-primary: 0 12px 24px -8px rgba(30, 58, 26, 0.25);
+
+  /* Transitions */
+  --transition-normal: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  letter-spacing: -0.01em;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+/* Utilities */
+.bg-mesh {
+  background-color: var(--bg-main);
+  background-image: var(--gradient-page);
+}
+
+.container {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 0 var(--space-md);
+}
+
+.glass {
+  background: var(--gradient-glass);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.text-gradient {
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.btn-primary {
+  background: var(--gradient-primary);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  transition: var(--transition-normal);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}

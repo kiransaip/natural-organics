@@ -1,0 +1,38 @@
+import React, { useState, useEffect } from 'react';
+// eslint-disable-next-line no-unused-vars
+import { motion } from 'framer-motion';
+import { supabase } from '../lib/supabase';
+
+const TermsConditions = () => {
+  const [content, setContent] = useState('Loading Terms and Conditions...');
+
+  useEffect(() => {
+    const fetchTerms = async () => {
+      const { data, error } = await supabase.from('legal_pages').select('content').eq('id', 'terms').single();
+      if (data && data.content) {
+        setContent(data.content);
+      } else {
+        setContent('Terms & Conditions could not be loaded at this time.');
+      }
+    };
+    fetchTerms();
+  }, []);
+
+  return (
+    <div className="page bg-mesh" style={{ paddingTop: '100px', minHeight: '100vh' }}>
+      <div className="container" style={{ maxWidth: '800px', padding: '2rem 1rem', background: 'white', borderRadius: '12px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', marginBottom: '3rem' }}>
+        <h1 style={{ color: 'var(--primary-dark)', marginBottom: '1.5rem', fontSize: '2.5rem' }}>Terms & Conditions</h1>
+        
+        <div style={{ color: 'var(--text-muted)', lineHeight: '1.6', whiteSpace: 'pre-wrap' }}>
+          {content}
+        </div>
+
+        <p style={{ color: 'var(--text-muted)', lineHeight: '1.6', marginTop: '3rem', fontSize: '0.9rem' }}>
+          Last Updated: {new Date().toLocaleDateString()}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default TermsConditions;
