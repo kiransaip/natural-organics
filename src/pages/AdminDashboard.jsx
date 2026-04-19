@@ -265,7 +265,7 @@ const AdminDashboard = () => {
             <div className="logo-icon bg-primary" style={{ padding: '0.25rem', borderRadius: '4px', display: 'flex' }}>
               <Package size={20} color="white" />
             </div>
-            <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--primary)' }}>Fresh<span style={{ color: 'var(--secondary)' }}>Veg</span></span>
+            <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--primary)' }}>Natural <span style={{ color: 'var(--secondary)' }}>Organics</span></span>
             <span className="brand-divider hide-mobile" style={{ color: 'var(--text-muted)', margin: '0 8px' }}>|</span>
             <h1 className="hide-mobile">Admin Panel</h1>
           </div>
