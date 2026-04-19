@@ -25,7 +25,7 @@ const DEFAULT_CATEGORIES = ['Vegetables', 'Leafy Greens', 'Fruits', 'Natural Pro
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState(['All']);
+  const [categories, setCategories] = useState([]);
   const [vendors, setVendors] = useState([]);
   const [heroImages, setHeroImages] = useState([]);
   const [privacyContent, setPrivacyContent] = useState('Loading Privacy Policy...');
@@ -615,8 +615,10 @@ const AdminDashboard = () => {
 
                     <div className="form-group">
                       <label>Category</label>
-                      <select name="category" value={formData.category} onChange={handleChange}>
-                        {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                      <select name="category" value={formData.category} onChange={handleChange} required>
+                        {categories.map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
                       </select>
                     </div>
 

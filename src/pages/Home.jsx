@@ -9,7 +9,7 @@ import { supabase } from '../lib/supabase';
 const DEFAULT_SEED = [
   { id: '1', name: 'Organic Tomatoes', price: 60, unit: '1kg', category: 'Vegetables', rating: 4.8, reviews: 120, image: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=800' },
   { id: '2', name: 'Fresh Spinach', price: 40, unit: '1 bunch', category: 'Leafy Greens', rating: 4.9, reviews: 85, image: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&q=80&w=800' },
-  { id: '3', name: 'Natural Honey', price: 250, unit: '500g', category: 'Natural', rating: 5.0, reviews: 200, image: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&q=80&w=800' }
+  { id: '3', name: 'Natural Honey', price: 250, unit: '500g', category: 'Natural Products', rating: 5.0, reviews: 200, image: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&q=80&w=800' }
 ];
 
 const readLS = (key, fallback) => {
@@ -26,16 +26,18 @@ const Home = () => {
   const [heroImages, setHeroImages] = useState([]);
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
 
-  const loadData = useCallback(async () => {
     const { data: prods } = await supabase.from('products').select('*');
     if (prods && prods.length > 0) {
       setProducts(prods);
-      const cats = Array.from(new Set(prods.map(p => p.category)));
-      setCategories(['All', ...cats]);
     } else {
       setProducts(DEFAULT_SEED);
-      const cats = Array.from(new Set(DEFAULT_SEED.map(p => p.category)));
-      setCategories(['All', ...cats]);
+    }
+
+    const { data: catData } = await supabase.from('categories').select('*');
+    if (catData && catData.length > 0) {
+      setCategories(catData.map(c => c.name));
+    } else {
+      setCategories(['Vegetables', 'Leafy Greens', 'Fruits', 'Natural Products']);
     }
 
     const { data: heroData } = await supabase.from('hero_images').select('*');
@@ -79,9 +81,9 @@ const Home = () => {
     show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
   };
 
-  // Build category list: All + saved admin categories + categories from products
-  const productCategories = [...new Set(products.map(p => p.category))];
-  const allCategories = ['All', ...new Set([...categories, ...productCategories])];
+  // Build category list: All + categories from DB and products
+  const productCats = products.map(p => p.category);
+  const allCategories = ['All', ...new Set([...categories, ...productCats])];
   const filteredProducts = selectedCategory === 'All'
     ? products
     : products.filter(p => p.category === selectedCategory);
