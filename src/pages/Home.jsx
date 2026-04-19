@@ -25,7 +25,7 @@ const Home = () => {
   
   const [heroImages, setHeroImages] = useState([]);
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
-
+  const loadData = useCallback(async () => {
     const { data: prods } = await supabase.from('products').select('*');
     if (prods && prods.length > 0) {
       setProducts(prods);
