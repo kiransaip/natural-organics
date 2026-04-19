@@ -18,7 +18,7 @@ const ReturnOrder = () => {
     // Attempt to decode the Order ID as validation
     try {
       if (formData.orderId.trim()) {
-        const decoded = atob(formData.orderId.trim());
+        const decoded = decodeURIComponent(escape(atob(formData.orderId.trim())));
         if (!decoded.startsWith('ORD-')) {
           errs.orderId = 'Invalid Order ID format. Must match original WhatsApp order.';
         }

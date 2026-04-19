@@ -33,14 +33,15 @@ const CartDrawer = () => {
       `  • ${product.name} x${quantity} — ₹${(product.price * quantity).toLocaleString()} (${product.unit})`
     ).join('\n');
 
-    const orderIdRaw = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
-    const orderIdB64 = btoa(orderIdRaw);
-
     const now = new Date();
     const dateTimeStr = now.toLocaleDateString('en-IN', { 
       day: '2-digit', month: 'short', year: 'numeric', 
       hour: '2-digit', minute: '2-digit', hour12: true 
     });
+
+    // Make Order ID securely identifiable through date, name, and total price
+    const idString = `ORD-${formData.name} | ${dateTimeStr} | ₹${totalPrice.toLocaleString()}`;
+    const orderIdB64 = btoa(unescape(encodeURIComponent(idString)));
 
     const message = [
       `*New Order - Natural Organics*`,
