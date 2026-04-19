@@ -36,13 +36,17 @@ const CartDrawer = () => {
     const now = new Date();
     const dateTimeStr = now.toLocaleDateString('en-IN', { 
       day: '2-digit', month: 'short', year: 'numeric', 
-      hour: '2-digit', minute: '2-digit', hour12: true 
+      hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true 
     });
 
-    // Make Order ID securely identifiable through date, name, last 4 of mobile, and total price
+    // Make Order ID securely identifiable through date, name, last 4 of mobile, products and total price
     const mobileLast4 = formData.mobile.slice(-4) || '0000';
-    const idString = `ORD-${formData.name} (${mobileLast4}) | ${dateTimeStr} | ₹${totalPrice.toLocaleString()}`;
-    const orderIdB64 = btoa(unescape(encodeURIComponent(idString)));
+    const productNames = cart.map(item => item.product.name).join(', ');
+    const idString = `ORD-${formData.name} (${mobileLast4}) | ${productNames} | ${dateTimeStr} | ₹${totalPrice.toLocaleString()}`;
+    
+    // Double Base64 encoding
+    const firstEncode = btoa(unescape(encodeURIComponent(idString)));
+    const orderIdB64 = btoa(firstEncode);
 
     const message = [
       `*New Order - Natural Organics*`,

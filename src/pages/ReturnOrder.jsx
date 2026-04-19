@@ -15,10 +15,11 @@ const ReturnOrder = () => {
     if (!formData.orderId.trim()) errs.orderId = 'Order ID is required';
     if (!formData.reason.trim()) errs.reason = 'Please provide a reason for the return';
     
-    // Attempt to decode the Order ID as validation
+    // Attempt to decode the Order ID as validation (Double Decoder)
     try {
       if (formData.orderId.trim()) {
-        const decoded = decodeURIComponent(escape(atob(formData.orderId.trim())));
+        const firstDecode = atob(formData.orderId.trim());
+        const decoded = decodeURIComponent(escape(atob(firstDecode)));
         if (!decoded.startsWith('ORD-')) {
           errs.orderId = 'Invalid Order ID format. Must match original WhatsApp order.';
         }
