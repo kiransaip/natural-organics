@@ -8,6 +8,18 @@ import { supabase } from '../lib/supabase';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
+const DEFAULT_SEED = [
+  { id: '1', name: 'Organic Tomatoes', price: 60, unit: '1kg', category: 'Vegetables', rating: 4.8, reviews: 120, image: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=800' },
+  { id: '2', name: 'Fresh Spinach', price: 40, unit: '1 bunch', category: 'Leafy Greens', rating: 4.9, reviews: 85, image: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&q=80&w=800' },
+  { id: '3', name: 'Natural Honey', price: 250, unit: '500g', category: 'Natural Products', rating: 5.0, reviews: 200, image: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&q=80&w=800' }
+];
+
+const DEFAULT_HERO_IMAGES = [
+  'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200',
+  'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=1200',
+  'https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=1200'
+];
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
@@ -47,10 +59,23 @@ const AdminDashboard = () => {
         supabase.from('legal_pages').select('*')
       ]);
 
-      if (pD) setProducts(pD.map(p => ({ ...p, reviewsList: p.reviewsList || [] })));
+      if (pD && pD.length > 0) {
+        setProducts(pD.map(p => ({ ...p, reviewsList: p.reviewsList || [] })));
+      } else {
+        await supabase.from('products').insert(DEFAULT_SEED);
+        setProducts(DEFAULT_SEED.map(p => ({ ...p, reviewsList: [] })));
+      }
+
       if (cD && cD.length > 0) setCategories(cD.map(c => c.name));
       if (vD) setVendors(vD);
-      if (hD) setHeroImages(hD.map(h => h.url));
+
+      if (hD && hD.length > 0) {
+        setHeroImages(hD.map(h => h.url));
+      } else {
+        const seedHero = DEFAULT_HERO_IMAGES.map((url) => ({ id: generateId(), url }));
+        await supabase.from('hero_images').insert(seedHero);
+        setHeroImages(DEFAULT_HERO_IMAGES);
+      }
       
       if (lD) {
         const priv = lD.find(x => x.id === 'privacy');
