@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Star, ChevronDown, ChevronUp, User, Send } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { supabase } from '../../lib/supabase';
 
 const ProductCard = ({ product }) => {
   const { id, name, price, unit, image, rating: initialRating, reviews: initialReviewCount, category, description, reviewsList = [] } = product;
@@ -29,19 +30,24 @@ const ProductCard = ({ product }) => {
     const updatedReviews = [...localReviews, reviewObj];
     setLocalReviews(updatedReviews);
 
-    // Update global localStorage
-    const allProducts = JSON.parse(localStorage.getItem('freshveg_products') || '[]');
-    const updatedProducts = allProducts.map(p => {
-      if (p.id === id) {
-        return { ...p, reviewsList: updatedReviews, reviews: (p.reviews || 0) + 1 };
-      }
-      return p;
-    });
-    localStorage.setItem('freshveg_products', JSON.stringify(updatedProducts));
+    // Update Supabase
+    const { error } = await supabase
+      .from('products')
+      .update({ 
+        reviewsList: updatedReviews, 
+        reviews: (product.reviews || 0) + 1 
+      })
+      .eq('id', id);
+
+    if (error) {
+      console.error("Error saving review:", error);
+      alert("Something went wrong saving your review. Please try again.");
+    } else {
+      alert("Thank you for your review!");
+    }
 
     // Reset form
     setNewReview({ user: '', rating: 5, comment: '' });
-    alert("Thank you for your review!");
   };
 
   return (
@@ -261,9 +267,16 @@ const ProductCard = ({ product }) => {
           line-height: 1.5;
           margin-bottom: 1.5rem;
           display: -webkit-box;
-          -webkit-line-clamp: 3;
+          -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
+          transition: all 0.3s ease;
+          cursor: pointer;
+        }
+        .product-card:hover .product-desc,
+        .product-desc:active {
+          -webkit-line-clamp: unset;
+          margin-bottom: 1.5rem;
         }
         .footer {
           display: flex;
