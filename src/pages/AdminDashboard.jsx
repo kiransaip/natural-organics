@@ -180,7 +180,11 @@ const AdminDashboard = () => {
     });
     setProducts(updatedProducts);
     const prod = updatedProducts.find(x => x.id === productId);
-    await supabase.from('products').upsert({ ...prod, reviewsList: prod.reviewsList });
+    const { rating, reviews, reviewsList, ...coreData } = prod;
+    const { error } = await supabase.from('products').upsert(prod);
+    if (error && error.message.includes('column')) {
+      await supabase.from('products').upsert(coreData);
+    }
   };
 
   const deleteReview = async (productId, reviewId) => {
@@ -193,7 +197,11 @@ const AdminDashboard = () => {
     });
     setProducts(updatedProducts);
     const prod = updatedProducts.find(x => x.id === productId);
-    await supabase.from('products').upsert({ ...prod, reviewsList: prod.reviewsList });
+    const { rating, reviews, reviewsList, ...coreData } = prod;
+    const { error } = await supabase.from('products').upsert(prod);
+    if (error && error.message.includes('column')) {
+      await supabase.from('products').upsert(coreData);
+    }
   };
 
   const handleSubmit = async (e) => {
