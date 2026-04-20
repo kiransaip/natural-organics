@@ -14,7 +14,7 @@ const ProductCard = ({ product }) => {
 
   const activeReviews = localReviews.filter(r => !r.isHidden);
 
-  const handleReviewSubmit = (e) => {
+  const handleReviewSubmit = async (e) => {
     e.preventDefault();
     if (!newReview.user.trim() || !newReview.comment.trim()) return;
 
