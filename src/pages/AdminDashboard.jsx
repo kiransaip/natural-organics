@@ -207,16 +207,29 @@ const AdminDashboard = () => {
       setProducts(products.map(p => p.id === v.id ? v : p));
       const { error } = await supabase.from('products').upsert(v);
       if (error) {
-        console.error("Supabase Error:", error);
-        alert("Failed to update product in Database! Error: " + error.message);
+        if (error.message.includes('column')) {
+          // Retry with SAFE minimal columns
+          const { rating, reviews, reviewsList, ...safeV } = v;
+          const { error: error2 } = await supabase.from('products').upsert(safeV);
+          if (error2) alert("Critical Error: " + error2.message);
+        } else {
+          alert("Database Error: " + error.message);
+        }
       }
     } else {
       const v = { ...updatedForm, id: generateId() };
       setProducts([...products, v]);
       const { error } = await supabase.from('products').insert(v);
       if (error) {
-        console.error("Supabase Error:", error);
-        alert("Failed to add product to Database! Error: " + error.message);
+        if (error.message.includes('column')) {
+          // Retry with SAFE minimal columns
+          const { rating, reviews, reviewsList, ...safeV } = v;
+          const { error: error2 } = await supabase.from('products').insert(safeV);
+          if (error2) alert("Critical Error: " + error2.message);
+          else alert("Product Saved! Note: Rating/Reviews were skipped because your Database needs manual updating (run the SQL fix provided).");
+        } else {
+          alert("Database Error: " + error.message);
+        }
       }
     }
     handleCloseModal();

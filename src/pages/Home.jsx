@@ -16,7 +16,16 @@ const Home = () => {
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   const loadData = useCallback(async () => {
     const { data: prods } = await supabase.from('products').select('*');
-    setProducts(prods || []);
+    if (prods) {
+      // Ensure missing columns don't break the UI
+      const sanitizedProds = prods.map(p => ({
+        ...p,
+        rating: p.rating ?? 5.0,
+        reviews: p.reviews ?? 0,
+        reviewsList: p.reviewsList ?? []
+      }));
+      setProducts(sanitizedProds);
+    }
 
     const { data: catData } = await supabase.from('categories').select('*');
     setCategories(catData ? catData.map(c => c.name) : []);
