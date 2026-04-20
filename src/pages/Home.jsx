@@ -113,7 +113,9 @@ const Home = () => {
             initial={{ opacity: 0, scale: 0.9, rotate: -2 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-            style={{ position: 'relative', overflow: 'hidden', borderRadius: 'var(--radius-lg)' }}
+            style={{ position: 'relative', overflow: 'hidden', borderRadius: 'var(--radius-lg)', cursor: 'pointer' }}
+            onClick={() => setCurrentHeroIndex(prev => (prev + 1) % heroImages.length)}
+            title="Click to see next"
           >
             <div className="image-glow"></div>
             <AnimatePresence mode="popLayout">
