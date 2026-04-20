@@ -26,7 +26,7 @@ const AdminDashboard = () => {
   const [vendorForm, setVendorForm] = useState({ name: '', specialty: '', location: '', phone: '', description: '', image: '' });
 
   const [formData, setFormData] = useState({
-    name: '', price: '', unit: '1kg', category: 'Vegetables', image: '', rating: 5.0, reviews: 0, description: '', reviewsList: []
+    name: '', price: '', unit: '1kg', category: 'Vegetables', image: '', rating: 5.0, reviews: 0, description: '', reviewsList: [], offer_tag: ''
   });
 
   useEffect(() => {
@@ -148,7 +148,7 @@ const AdminDashboard = () => {
       setEditingProduct(null);
       setFormData({
         name: '', price: '', unit: '1kg', category: categories[0] || 'Vegetables', 
-        image: '', rating: 5.0, reviews: 0, description: '', reviewsList: []
+        image: '', rating: 5.0, reviews: 0, description: '', reviewsList: [], offer_tag: ''
       });
     }
     setIsModalOpen(true);
@@ -230,11 +230,11 @@ const AdminDashboard = () => {
       const { error } = await supabase.from('products').insert(v);
       if (error) {
         if (error.message.includes('column')) {
-          // Retry with SAFE minimal columns
-          const { rating, reviews, reviewsList, ...safeV } = v;
+          // Retry with SAFE minimal columns (omitting extra features that might not be in the user's current schema)
+          const { rating, reviews, reviewsList, offer_tag, ...safeV } = v;
           const { error: error2 } = await supabase.from('products').insert(safeV);
           if (error2) alert("Critical Error: " + error2.message);
-          else alert("Product Saved! Note: Rating/Reviews were skipped because your Database needs manual updating (run the SQL fix provided).");
+          else alert("Product Saved! Note: Some extra fields (Rating/Reviews/OfferTag) were skipped because your Database schema needs update.");
         } else {
           alert("Database Error: " + error.message);
         }
@@ -616,6 +616,11 @@ const AdminDashboard = () => {
                           <option key={cat} value={cat}>{cat}</option>
                         ))}
                       </select>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Offer Tag (e.g. "50% OFF", "Save ₹20")</label>
+                      <input type="text" name="offer_tag" value={formData.offer_tag} onChange={handleChange} placeholder="Optional discount label..." />
                     </div>
 
                     <div className="row-2 hidden-fields">

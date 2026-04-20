@@ -6,7 +6,7 @@ import { useCart } from '../../context/CartContext';
 import { supabase } from '../../lib/supabase';
 
 const ProductCard = ({ product }) => {
-  const { id, name, price, unit, image, rating: initialRating, reviews: initialReviewCount, category, description, reviewsList = [] } = product;
+  const { id, name, price, unit, image, rating: initialRating, reviews: initialReviewCount, category, description, reviewsList = [], offer_tag } = product;
   const { addToCart } = useCart();
   const [showReviews, setShowReviews] = useState(false);
   const [newReview, setNewReview] = useState({ user: '', rating: 5, comment: '' });
@@ -63,6 +63,16 @@ const ProductCard = ({ product }) => {
           whileHover={{ scale: 1.05, transition: { duration: 0.5 } }}
         />
         <div className="category-tag glass">{category}</div>
+        {offer_tag && (
+          <motion.div 
+            className="offer-badge"
+            initial={{ x: 50, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            whileHover={{ scale: 1.1, rotate: 5 }}
+          >
+            {offer_tag}
+          </motion.div>
+        )}
       </div>
       
       <div className="content">
@@ -316,6 +326,29 @@ const ProductCard = ({ product }) => {
         }
         .add-cart-btn:hover {
           box-shadow: var(--shadow-primary);
+        }
+        .offer-badge {
+          position: absolute;
+          top: 1rem;
+          right: -5px;
+          background: #e11d48;
+          color: white;
+          padding: 0.5rem 1.25rem;
+          font-size: 0.75rem;
+          font-weight: 900;
+          text-transform: uppercase;
+          letter-spacing: 0.05em;
+          border-radius: 4px 0 0 4px;
+          box-shadow: -2px 2px 10px rgba(225, 29, 72, 0.4);
+          z-index: 10;
+        }
+        .offer-badge::after {
+          content: '';
+          position: absolute;
+          bottom: -5px;
+          right: 0;
+          border-left: 5px solid #9f1239;
+          border-bottom: 5px solid transparent;
         }
       `}</style>
     </motion.div>
