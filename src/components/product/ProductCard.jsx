@@ -272,6 +272,7 @@ const ProductCard = ({ product }) => {
           overflow: hidden;
           transition: all 0.3s ease;
           cursor: pointer;
+          white-space: pre-wrap;
         }
         .product-card:hover .product-desc,
         .product-desc:active {
