@@ -205,11 +205,19 @@ const AdminDashboard = () => {
     if (editingProduct) {
       const v = { ...updatedForm, id: editingProduct.id };
       setProducts(products.map(p => p.id === v.id ? v : p));
-      await supabase.from('products').upsert(v);
+      const { error } = await supabase.from('products').upsert(v);
+      if (error) {
+        console.error("Supabase Error:", error);
+        alert("Failed to update product in Database! Error: " + error.message);
+      }
     } else {
       const v = { ...updatedForm, id: generateId() };
       setProducts([...products, v]);
-      await supabase.from('products').insert(v);
+      const { error } = await supabase.from('products').insert(v);
+      if (error) {
+        console.error("Supabase Error:", error);
+        alert("Failed to add product to Database! Error: " + error.message);
+      }
     }
     handleCloseModal();
   };
