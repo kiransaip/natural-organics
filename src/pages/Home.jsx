@@ -6,17 +6,6 @@ import FloatingElements from '../components/ui/FloatingElements';
 import ProductCard from '../components/product/ProductCard';
 import { supabase } from '../lib/supabase';
 
-const DEFAULT_SEED = [
-  { id: '1', name: 'Organic Tomatoes', price: 60, unit: '1kg', category: 'Vegetables', rating: 4.8, reviews: 120, image: 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&q=80&w=800' },
-  { id: '2', name: 'Fresh Spinach', price: 40, unit: '1 bunch', category: 'Leafy Greens', rating: 4.9, reviews: 85, image: 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&q=80&w=800' },
-  { id: '3', name: 'Natural Honey', price: 250, unit: '500g', category: 'Natural Products', rating: 5.0, reviews: 200, image: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?auto=format&fit=crop&q=80&w=800' }
-];
-
-const readLS = (key, fallback) => {
-  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }
-  catch { return fallback; }
-};
-
 const Home = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -27,32 +16,16 @@ const Home = () => {
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   const loadData = useCallback(async () => {
     const { data: prods } = await supabase.from('products').select('*');
-    if (prods && prods.length > 0) {
-      setProducts(prods);
-    } else {
-      setProducts(DEFAULT_SEED);
-    }
+    setProducts(prods || []);
 
     const { data: catData } = await supabase.from('categories').select('*');
-    if (catData && catData.length > 0) {
-      setCategories(catData.map(c => c.name));
-    } else {
-      setCategories(['Vegetables', 'Leafy Greens', 'Fruits', 'Natural Products']);
-    }
+    setCategories(catData ? catData.map(c => c.name) : []);
 
     const { data: heroData } = await supabase.from('hero_images').select('*');
-    if (heroData && heroData.length > 0) {
-      setHeroImages(heroData.map(h => h.url));
-    } else {
-      setHeroImages(['https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1200', 'https://images.unsplash.com/photo-1592924357228-91a4daadcfea?auto=format&fit=crop&w=1200', 'https://images.unsplash.com/photo-1576045057995-568f588f82fb?auto=format&fit=crop&w=1200']);
-    }
+    setHeroImages(heroData ? heroData.map(h => h.url) : []);
 
     const { data: vendorsData } = await supabase.from('vendors').select('*');
-    if (vendorsData && vendorsData.length > 0) {
-      setVendors(vendorsData);
-    } else {
-      setVendors([]);
-    }
+    setVendors(vendorsData || []);
   }, []);
 
   useEffect(() => {
