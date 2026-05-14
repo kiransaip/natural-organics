@@ -375,15 +375,38 @@ const AdminDashboard = () => {
               type="file" 
               accept="image/*" 
               style={{ display: 'none' }} 
-              onChange={(e) => {
+              onChange={async (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
-                const reader = new FileReader();
-                reader.onloadend = () => {
-                  saveHeroImages([...heroImages, reader.result]);
-                };
-                reader.readAsDataURL(file);
-                e.target.value = '';
+                
+                try {
+                  // Optional: check file size (e.g. 5MB)
+                  if (file.size > 5 * 1024 * 1024) {
+                    alert('File size should be less than 5MB');
+                    return;
+                  }
+                  
+                  const fileExt = file.name.split('.').pop();
+                  const fileName = `hero-${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+                  const filePath = `uploads/${fileName}`;
+
+                  const { data, error } = await supabase.storage
+                    .from('images')
+                    .upload(filePath, file);
+
+                  if (error) throw error;
+
+                  const { data: urlData } = supabase.storage
+                    .from('images')
+                    .getPublicUrl(filePath);
+
+                  saveHeroImages([...heroImages, urlData.publicUrl]);
+                } catch (error) {
+                  console.error("Error uploading hero image:", error);
+                  alert("Error uploading image to cloud.");
+                } finally {
+                  e.target.value = '';
+                }
               }} 
             />
           </label>

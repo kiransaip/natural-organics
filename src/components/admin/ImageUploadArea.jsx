@@ -1,22 +1,15 @@
 import React, { useState, useCallback, useEffect } from 'react';
-import { UploadCloud, X } from 'lucide-react';
+import { UploadCloud, X, Loader } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 
 const ImageUploadArea = ({ value, onChange }) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [preview, setPreview] = useState(value || '');
 
   useEffect(() => {
     setPreview(value);
   }, [value]);
-
-  const convertToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = error => reject(error);
-    });
-  };
 
   const handleFileProcess = async (file) => {
     if (file && file.type.startsWith('image/')) {
@@ -25,12 +18,31 @@ const ImageUploadArea = ({ value, onChange }) => {
         return;
       }
       try {
-        const base64 = await convertToBase64(file);
-        setPreview(base64);
-        onChange(base64);
+        setIsUploading(true);
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+        const filePath = `uploads/${fileName}`;
+
+        const { data, error } = await supabase.storage
+          .from('images')
+          .upload(filePath, file);
+
+        if (error) {
+          throw error;
+        }
+
+        const { data: urlData } = supabase.storage
+          .from('images')
+          .getPublicUrl(filePath);
+
+        const publicUrl = urlData.publicUrl;
+        setPreview(publicUrl);
+        onChange(publicUrl);
       } catch (error) {
-        console.error("Error converting file to base64", error);
-        alert('Error preparing image. Please try again.');
+        console.error("Error uploading image:", error);
+        alert('Error uploading image. Please try again.');
+      } finally {
+        setIsUploading(false);
       }
     } else {
       alert('Please upload a valid image file');
@@ -105,7 +117,13 @@ const ImageUploadArea = ({ value, onChange }) => {
         onChange={handleInputChange} 
       />
 
-      {preview ? (
+      {isUploading ? (
+        <div className="empty-state">
+          <Loader className="spin" size={32} color="var(--primary)" style={{ margin: '0 auto', animation: 'spin 2s linear infinite' }} />
+          <p className="upload-title" style={{ marginTop: '1rem' }}>Uploading image...</p>
+          <style>{`@keyframes spin { 100% { transform: rotate(360deg); } }`}</style>
+        </div>
+      ) : preview ? (
         <div className="preview-container">
           <img src={preview} alt="Product Preview" className="preview-image" />
           <button type="button" className="clear-btn" onClick={clearImage}>
